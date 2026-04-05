@@ -9,7 +9,7 @@ import {
 } from 'recharts';
 import { useFinance } from '../../context/FinanceContext';
 
-const InsightsPanel = () => {
+const InsightsPanel = ({ isMobile }) => {
   const { transactions, summary, insights, CATEGORY_META } = useFinance();
 
   const monthlyData = useMemo(() => {
@@ -83,7 +83,7 @@ const InsightsPanel = () => {
         </p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px' }}>
         <StatCard
           icon={Target} iconColor="var(--primary)" iconBg="rgba(99,102,241,0.1)"
           title="Top Category" value={insights.topCategory.name}
@@ -107,7 +107,7 @@ const InsightsPanel = () => {
         />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '16px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '2fr 1fr', gap: '16px' }}>
         <div className="card" style={{ padding: '20px' }}>
           <h3 style={{ fontWeight: 700, fontSize: '1rem', marginBottom: '4px' }}>Monthly Net Savings</h3>
           <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '20px' }}>Income minus expenses per month</p>
@@ -164,7 +164,7 @@ const InsightsPanel = () => {
         </ResponsiveContainer>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '16px' }}>
         <div className="card" style={{ padding: '20px' }}>
           <h3 style={{ fontWeight: 700, fontSize: '1rem', marginBottom: '16px' }}>Category Breakdown</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>

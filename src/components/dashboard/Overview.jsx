@@ -26,7 +26,7 @@ function AnimatedNumber({ value, prefix = '', suffix = '' }) {
   return <span>{prefix}{display.toLocaleString()}{suffix}</span>;
 }
 
-const DashboardOverview = () => {
+const DashboardOverview = ({ isMobile, isTablet }) => {
   const { transactions, summary, insights, CATEGORY_META } = useFinance();
 
   const chartData = useMemo(() => {
@@ -111,7 +111,7 @@ const DashboardOverview = () => {
         </p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(220px, 1fr))', gap: isMobile ? '12px' : '16px' }}>
         {cards.map((card, i) => (
           <div key={card.title} className={`card card-interactive animate-fade-up stagger-${i + 1}`}
             style={{ background: card.bg, borderColor: `${card.color}20` }}
@@ -145,7 +145,7 @@ const DashboardOverview = () => {
         ))}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '16px', minHeight: '380px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '2fr 1fr', gap: '16px', minHeight: isMobile ? 'auto' : '380px' }}>
         <div className="card" style={{ padding: '20px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
             <div>
@@ -219,7 +219,7 @@ const DashboardOverview = () => {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : isTablet ? '1fr 1fr' : '1fr 1fr 1fr', gap: '16px' }}>
         <div className="card card-interactive" style={{
           background: 'linear-gradient(135deg, rgba(99,102,241,0.06), rgba(139,92,246,0.04))',
           borderColor: 'rgba(99,102,241,0.15)',

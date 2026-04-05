@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FinanceProvider, useFinance } from './context/FinanceContext';
+import { FinanceProvider } from './context/FinanceContext';
 import Sidebar from './components/layout/Sidebar';
 import Header from './components/layout/Header';
 import DashboardOverview from './components/dashboard/Overview';
@@ -13,30 +13,38 @@ const TABS = {
   insights: InsightsPanel,
 };
 
+function useWindowWidth() {
+  const [width, setWidth] = useState(window.innerWidth);
+  useEffect(() => {
+    const onResize = () => setWidth(window.innerWidth);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+  return width;
+}
+
 function AppContent() {
+  const width = useWindowWidth();
+  const isMobile = width <= 768;
+  const isTablet = width <= 1024;
+
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth > 1024);
+  const [sidebarOpen, setSidebarOpen] = useState(!isTablet);
   const [mobileSidebar, setMobileSidebar] = useState(false);
 
   useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth > 1024) {
-        setSidebarOpen(true);
-        setMobileSidebar(false);
-      } else {
-        setSidebarOpen(false);
-      }
-    };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+    if (width > 1024) { setSidebarOpen(true); setMobileSidebar(false); }
+    else { setSidebarOpen(false); }
+  }, [width]);
 
   const ActivePage = TABS[activeTab] || DashboardOverview;
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
-    if (window.innerWidth <= 1024) setMobileSidebar(false);
+    if (isTablet) setMobileSidebar(false);
   };
+
+  const mainMargin = isTablet ? 0 : (sidebarOpen ? 260 : 72);
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', position: 'relative' }}>
@@ -56,22 +64,26 @@ function AppContent() {
         isOpen={sidebarOpen}
         setIsOpen={setSidebarOpen}
         mobileOpen={mobileSidebar}
+        isMobile={isTablet}
       />
 
       <main style={{
         flex: 1,
-        padding: '24px 32px',
-        marginLeft: sidebarOpen ? '260px' : '72px',
+        padding: isMobile ? '14px' : isTablet ? '18px' : '24px 32px',
+        marginLeft: mainMargin,
         transition: 'margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
         maxWidth: '1440px',
         width: '100%',
         minHeight: '100vh',
-        ...(window.innerWidth <= 1024 ? { marginLeft: 0, padding: '16px' } : {}),
       }}>
-        <Header onMenuClick={() => setMobileSidebar(true)} showMenuButton={!sidebarOpen && window.innerWidth <= 1024} />
+        <Header
+          onMenuClick={() => setMobileSidebar(true)}
+          showMenuButton={isTablet}
+          isMobile={isMobile}
+        />
 
-        <div key={activeTab} className="animate-fade-in" style={{ marginTop: '1.5rem' }}>
-          <ActivePage />
+        <div key={activeTab} className="animate-fade-in" style={{ marginTop: isMobile ? '1rem' : '1.5rem' }}>
+          <ActivePage isMobile={isMobile} isTablet={isTablet} />
         </div>
       </main>
     </div>
